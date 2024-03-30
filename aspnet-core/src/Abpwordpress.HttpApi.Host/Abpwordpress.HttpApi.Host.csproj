@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Abpwordpress.Application\Abpwordpress.Application.csproj" />
     <ProjectReference Include="..\Abpwordpress.EntityFrameworkCore\Abpwordpress.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\Abpwordpress.HttpApi.Client\Abpwordpress.HttpApi.Client.csproj" />
     <ProjectReference Include="..\Abpwordpress.HttpApi\Abpwordpress.HttpApi.csproj" />
   </ItemGroup>
 

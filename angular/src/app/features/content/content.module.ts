@@ -5,17 +5,21 @@ import { ContentRoutingModule } from './content-routing.module';
 import { ContentComponent } from './content.component';
 import { SharedModule } from '../../shared/shared.module';
 import {TableModule} from 'primeng/table';
+import { EditorModule } from 'primeng/editor';
+import { ContentViewerComponent } from './content-viewer/content-viewer.component';
 
 @NgModule({
   declarations: [
     ContentComponent,
-    DatatableComponent
+    DatatableComponent,
+    ContentViewerComponent
   ],
   imports: [
     CommonModule,
     ContentRoutingModule,
     SharedModule,
-    TableModule
+    TableModule,
+    EditorModule
   ]
 })
 export class ContentModule { }

@@ -1,9 +1,10 @@
-import { Component, OnInit, ɵsetAllowDuplicateNgModuleIdsForTest } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ɵsetAllowDuplicateNgModuleIdsForTest } from '@angular/core';
 import { ContentDto } from '@proxy/contracts';
 import { ContentService } from '@proxy/controllers';
 import { FilterMetadata, LazyLoadEvent } from 'primeng/api';
 import { Rest } from '@abp/ng.core';
 import { IEnumerable, IQueryable } from 'linq-collections';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-datatable',
@@ -13,43 +14,44 @@ import { IEnumerable, IQueryable } from 'linq-collections';
 export class DatatableComponent implements OnInit {
   cols: any[];
   content: ContentDto[];
-
-  // ngOnInit() {
-  //   this._contentService.get().subscribe(x => {
-  //     this.content = (x as any)['value'];
-  //   });
-  //   this.cols = [{ field: 'name', header: 'name' }];
-  // }
-
   customers!: ContentDto[];
-
   totalRecords!: number;
-
   loading: boolean = false;
-
   selectAll: boolean = false;
-
   selectedContent!: ContentDto[];
   config?: Partial<Rest.Config>;
-  constructor(private _contentService: ContentService) {}
+
+  constructor(private _contentService: ContentService, private router: Router) {}
 
   ngOnInit() {
     this.loading = true;
   }
 
-  // private query: ODataQuery<ContentDto>;
+  @Output() delete = new EventEmitter<string>();
+  @Output() edit = new EventEmitter<string>();
+
+  deletar(id: string){
+    this.delete.emit(id);
+  }
+
+  editarContent(id: string){
+    this.edit.emit(id);
+  }
+
+  openInNewTab(params: any[], route?: string) {
+    try {
+      let mopa = this.router.createUrlTree(params);
+      let url = this.router.serializeUrl(mopa);
+      window.open(url, '_blank');
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   query: string = '';
   loadContent(event: LazyLoadEvent) {
     this.loading = true;
 
-    // this.query = this.odata
-    //   .Query()
-    //   .Expand('Orders')
-    //   .Select([
-    //     'Name'
-    //   ]);
-
-    //reset query value
     this.query = '';
 
     if (event.rows) {
@@ -68,7 +70,6 @@ export class DatatableComponent implements OnInit {
       const filterOData: string[] = [];
       for (let filterProperty in event.filters) {
         if (event.filters.hasOwnProperty(filterProperty)) {
-          // const filter = event.filters[filterProperty] as FilterMetadata;
           const filters = event.filters[filterProperty];
 
           let filtersTotalCount: number = (filters as any).length;
@@ -84,11 +85,7 @@ export class DatatableComponent implements OnInit {
             ) {
               const params = filter.matchMode.toLowerCase().split(':');
               const operator = params[0];
-
-              // Replace Boss.Name by Boss/Name
               const odataProperty = filterProperty.replace(/\./g, '/');
-
-              // http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html
               switch (operator) {
                 case 'length':
                 case 'day':
@@ -131,7 +128,6 @@ export class DatatableComponent implements OnInit {
 
       if (filterOData.length > 0) {
         this.query += '&$filter=' + filterOData.join("");
-        // this.query = this.query.Filter(filterOData.join(' and '));
       }
     }
 
@@ -139,7 +135,6 @@ export class DatatableComponent implements OnInit {
       const sortOrder: string = event.sortOrder && event.sortOrder > 0 ? 'asc' : 'desc';
       let orderby = this.toStringArray(event.sortField + ' ' + sortOrder);
       this.query += '&$orderby=' + orderby.join();
-      // this.query = this.query.OrderBy(event.sortField + ' ' + sortOrder);
     }
 
     let url = this.query;
@@ -149,17 +144,9 @@ export class DatatableComponent implements OnInit {
       this._contentService.getOdata(this.query).subscribe(x => {
         let totalitens = (x as any)['value'];
         this.content = (totalitens as ContentDto[]).slice(0, 10);
-        // https://localhost:44341/api/app/Content?$count=true
-        this.totalRecords = 200;
-        // this.totalRecords = (x as any)['@odata.count'];
+        this.totalRecords = (x as any)['@odata.count'];
         this.loading = false;
       });
-
-      // this._contentService.getContents({ lazyEvent: JSON.stringify(event) }).then(res => {
-      //   this.customers = res.customers;
-      //   this.totalRecords = res.totalRecords;
-      //   this.loading = false;
-      // });
     }, 1000);
   }
 

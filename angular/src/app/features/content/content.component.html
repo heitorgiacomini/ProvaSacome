@@ -24,57 +24,19 @@
     </div>
   </div>
   <div class="card-body">
-    <ngx-datatable [rows]="content.items" [count]="content.totalCount" [list]="list" default>
-      <ngx-datatable-column
-        [name]="'::Actions' | abpLocalization"
-        [maxWidth]="150"
-        [sortable]="false"
-      >
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <div ngbDropdown container="body" class="d-inline-block">
-            <button
-              class="btn btn-primary btn-sm dropdown-toggle"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              ngbDropdownToggle
-            >
-              <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
-            </button>
-            <div ngbDropdownMenu>
-              <button
-                *abpPermission="'Abpwordpress.Content.Edit'"
-                ngbDropdownItem
-                (click)="editContent(row.id)"
-              >
-                {{ '::Edit' | abpLocalization }}
-              </button>
-              <button
-                *abpPermission="'Abpwordpress.Content.Delete'"
-                ngbDropdownItem
-                (click)="delete(row.id)"
-              >
-                {{ '::Delete' | abpLocalization }}
-              </button>
-            </div>
-          </div>
-        </ng-template>
-      </ngx-datatable-column>
-          <ngx-datatable-column [name]="'::Title' | abpLocalization" prop="title"></ngx-datatable-column>
-          <ngx-datatable-column [name]="'::Body' | abpLocalization" prop="body"></ngx-datatable-column>
-    </ngx-datatable>
+    <app-datatable (edit)="editContent($event)"  (delete)="delete($event)" ></app-datatable>
   </div>
 </div>
 
-<abp-modal [(visible)]="isModalOpen">
+<abp-modal [(visible)]="isModalOpen" [options]="{ size: 'lg' }"
+>
   <ng-template #abpHeader>
 	<h3>{{ (selectedContent.id ? '::Edit' : '::NewContent' ) | abpLocalization }}</h3>
   </ng-template>
-
   <ng-template #abpBody>
-    <form [formGroup]="form" (ngSubmit)="save()">
-
+    <form [formGroup]="form" (ngSubmit)="save()" >
       <div class="mt-2">
-        <label for="content-title">title</label><span>*</span>
+        <label for="content-title">Title</label><span>*</span>
         <input
           type="text"
           id="content-title"
@@ -84,16 +46,10 @@
         />
       </div>
       <div class="mt-2">
-        <label for="content-body">body</label><span>*</span>
-        <input
-          type="text"
-          id="content-body"
-          class="form-control"
-          formControlName="body"
-          autofocus
-        />
+        <p-editor formControlName="body" [style]="{ height: '320px' }"
+          (keyup.enter)="$event.stopPropagation()" (keypress.enter)="$event.stopPropagation()"
+        ></p-editor>
       </div>
-
     </form>
   </ng-template>
 
@@ -101,9 +57,7 @@
     <button type="button" class="btn btn-secondary" abpClose>
       {{ '::Close' | abpLocalization }}
     </button>
-
-    <!--added save button-->
-    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="form.invalid" >
       <i class="fa fa-check mr-1"></i>
       {{ '::Save' | abpLocalization }}
     </button>

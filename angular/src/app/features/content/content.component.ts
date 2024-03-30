@@ -55,12 +55,8 @@ export class ContentComponent {
 
   buildForm() {
     this.form = this.fb.group({
-    title: [this.selectedContent.title || null, Validators.required],
-    body: [this.selectedContent.body || null, Validators.required],
-   // publishDate: [
-   //   this.selectedContent.publishDate ? new Date(this.selectedContent.publishDate) : null,
-   //   Validators.required,
-   // ],
+      title: [this.selectedContent.title || null, [ Validators.required, Validators.maxLength(10)]],
+      body: [this.selectedContent.body || null, [ Validators.required, Validators.maxLength(2000)]],
     });
   }
 

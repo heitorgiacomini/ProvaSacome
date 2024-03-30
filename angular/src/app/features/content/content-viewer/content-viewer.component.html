@@ -1,0 +1,12 @@
+<div class="card">
+  <div class="card-body">
+    <p-editor [(ngModel)]="content.body" [readonly]="true" >
+      <ng-template pTemplate="header">
+        <span class="ql-formats">
+          {{ content.title }}
+          <!-- <button type="button" class="ql-bold" aria-label="Bold"></button> -->
+        </span>
+      </ng-template>
+    </p-editor>
+  </div>
+</div>
