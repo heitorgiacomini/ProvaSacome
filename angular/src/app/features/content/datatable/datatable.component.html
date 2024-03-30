@@ -40,19 +40,23 @@
       <tr>
         <td>
           <button
+            type="button"
+            class="btn btn-primary btn-sm"
             *abpPermission="'Abpwordpress.Content.Edit'"
-            ngbDropdownItem
             (click)="editarContent(content.id)"
           >
             {{ '::Edit' | abpLocalization }}
           </button>
+
           <button
-            *abpPermission="'Abpwordpress.Content.Delete'"
-            ngbDropdownItem
+            type="button"
+            class="btn btn-danger btn-sm"
+            *abpPermission="'Abpwordpress.Content.Edit'"
             (click)="deletar(content.id)"
           >
-            {{ '::Delete' | abpLocalization }}
+          {{ '::Delete' | abpLocalization }}
           </button>
+
         </td>
         <td (click)="openInNewTab(['/content/', content.id])">{{ content.title }}</td>
       </tr>
